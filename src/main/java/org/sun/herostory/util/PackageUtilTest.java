@@ -30,103 +30,7 @@ public class PackageUtilTest {
      */
     private PackageUtilTest() {}
 
-    static public Set<Class<?>> listSubClazz(
-            String packageName,
-            boolean recursive,
-            Class<?> superClazz) {
 
-        Set<Class<?>> results = new HashSet<>();
-
-        return null;
-
-    }
-
-    /**
-     * 扫描一个包下所有的类，返回符合条件的类
-     *
-     * @param pack
-     * @param recursive
-     * @param filter
-     * @return
-     */
-    public static Class<?>[] listClasses(String base, String pack, boolean recursive, Function<Class<?>, Boolean> filter) throws Exception {
-
-        if(pack == null || pack.isEmpty()) {
-            return null;
-        }
-
-        List<Class<?>> result = new ArrayList<>();
-
-        String path = pack.replace(".", "/");
-
-        File baseFile = new File(base);
-
-        if(baseFile.isDirectory()) {
-
-            URL[] urls = {new URL("file://" + baseFile.getAbsolutePath() + "/")};
-            ClassLoader parent = Thread.currentThread().getContextClassLoader();
-            URLClassLoader urlClassLoader = new URLClassLoader(urls, parent);
-
-            Path basePath = baseFile.toPath();
-            File realBase = new File(baseFile, path);
-
-            Queue<File> q = new LinkedList<>();
-
-            File[] files = realBase.listFiles();
-
-            if(files != null) {
-
-                for (File file : files) {
-                    q.offer(file);
-                }
-
-                while (!q.isEmpty()) {
-
-                    // 取出当前节点
-                    File curr = q.poll();
-
-                    // 访问当前节点
-                    if (curr.isFile() || curr.getAbsoluteFile().toPath().endsWith(".class")) {
-                        Path absolutePath = curr.getAbsoluteFile().toPath();
-                        String relativize = basePath.relativize(absolutePath).toString();
-
-                        String className = relativize.split("\\.")[0].replace("/", ".");
-
-                        Class<?> clazz = Class.forName(className, false, urlClassLoader);
-
-                        if(filter == null || filter.apply(clazz)) {
-                            result.add(clazz);
-                        }
-
-                    } else if (curr.isDirectory()) {
-
-                        if(recursive) {
-
-                            File[] subFiles = curr.listFiles();
-                            if(subFiles != null) {
-                                for (File subFile : subFiles) {
-                                    q.offer(subFile);
-                                }
-                            }
-                        }
-
-                    } else {
-                        System.out.println("无法识别的文件类型：" + curr.getAbsolutePath());
-                    }
-
-                }
-            }
-
-        } else if(baseFile.isFile()) {
-
-        }
-
-        if(result == null) {
-            return null;
-        }
-        Class<?>[] classes = new Class<?>[result.size()];
-        return result.toArray(classes);
-    }
 
     public static Collection<Class<?>> loadClassesInDir(File baseDir, String packageName, boolean recursive, IClassFilter filter)
             throws Exception {
@@ -195,6 +99,7 @@ public class PackageUtilTest {
             return null;
         }
 
+        // 使用 URLClassLoader 添加新的路径
         URL[] urls = {jarFile.toURI().toURL()};
         URLClassLoader urlClassLoader = new URLClassLoader(urls, Thread.currentThread().getContextClassLoader());
 
@@ -264,6 +169,17 @@ public class PackageUtilTest {
                 }
 
                 if(ICmdHandler.class.isAssignableFrom(clazz)) {
+                    return true;
+                }
+                return false;
+            }
+        };
+
+        IClassFilter filter1 = new IClassFilter() {
+            @Override
+            public boolean accept(Class<?> clazz) {
+
+                if("ICmdHandler".equals(clazz.getSimpleName())) {
                     return true;
                 }
                 return false;

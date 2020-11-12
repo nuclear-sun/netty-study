@@ -20,6 +20,9 @@ public class GameMsgEncoder extends ChannelOutboundHandlerAdapter {
             super.write(ctx, msg, promise);
             return;
         }
+
+        logger.info("服务端发送消息： {}", msg.toString());
+
         GeneratedMessageV3 cmd = (GeneratedMessageV3)msg;
         Integer code = GameMsgRecognizer.getMsgCodeByMsgClass(cmd.getClass());
         if(code == null || code.intValue() < 0) {

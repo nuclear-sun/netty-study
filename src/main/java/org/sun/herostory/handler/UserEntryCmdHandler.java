@@ -11,6 +11,10 @@ public class UserEntryCmdHandler implements ICmdHandler<GameMsgProtocol.UserEntr
 
     public void handle(ChannelHandlerContext ctx, GameMsgProtocol.UserEntryCmd cmd) {
 
+        if(ctx == null || cmd == null) {
+            return;
+        }
+
         int userId = cmd.getUserId();
 
         // 通知
@@ -22,6 +26,7 @@ public class UserEntryCmdHandler implements ICmdHandler<GameMsgProtocol.UserEntr
         User user = new User();
         user.setUserId(cmd.getUserId());
         user.setHeroAvatar(cmd.getHeroAvatar());
+        user.setCurrHp(100);
 
         UserManager.addUser(user);
 
