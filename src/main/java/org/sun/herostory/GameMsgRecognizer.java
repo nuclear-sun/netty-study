@@ -30,6 +30,9 @@ public final class GameMsgRecognizer {
 
         Map<String, Integer> lowerNameToCode = new HashMap<>(values.length);
         for (GameMsgProtocol.MsgCode msgCode : values) {
+            if(msgCode == GameMsgProtocol.MsgCode.UNRECOGNIZED) {
+                continue;
+            }
             String lower = msgCode.name().replace("_", "").toLowerCase();
             lowerNameToCode.put(lower, msgCode.getNumber());
         }
@@ -43,8 +46,6 @@ public final class GameMsgRecognizer {
                 Integer code = lowerNameToCode.get(lowerCase);
 
                 cmdToCode.put(declaredClass, code);
-
-                logger.info("Found relation: {} -- {}", declaredClass.getSimpleName(), code);
 
                 try {
                     Method method = declaredClass.getMethod("getDefaultInstance");
