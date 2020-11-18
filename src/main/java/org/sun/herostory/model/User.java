@@ -8,6 +8,11 @@ public class User {
     private Integer userId;
 
     /**
+     * 用户名称
+     */
+    private String userName;
+
+    /**
      * 英雄形象
      */
     private String heroAvatar;
@@ -28,6 +33,14 @@ public class User {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getHeroAvatar() {

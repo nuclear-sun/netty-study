@@ -71,17 +71,7 @@ public class GameMsgHandler extends SimpleChannelInboundHandler<Object> {
             return;
         }
 
-        ICmdHandler handler = CmdHandlerFactory.create(msg.getClass());
-
-        if(handler != null) {
-            handler.handle(ctx, cast(msg));
-        }
+        MainThreadProcessor.getInstance().process(ctx, (GeneratedMessageV3)msg);
     }
 
-    private static <TCmd extends GeneratedMessageV3> TCmd cast(Object msg) {
-        if(msg == null || !(msg instanceof GeneratedMessageV3)) {
-            return null;
-        }
-        return (TCmd)msg;
-    }
 }
