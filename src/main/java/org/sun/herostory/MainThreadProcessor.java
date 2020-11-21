@@ -55,6 +55,12 @@ public final class MainThreadProcessor {
         });
     }
 
+    public void process(Runnable runnable) {
+        if(runnable != null) {
+            executorService.submit(runnable);
+        }
+    }
+
     private static <TCmd extends GeneratedMessageV3> TCmd cast(Object msg) {
         if(msg == null || !(msg instanceof GeneratedMessageV3)) {
             return null;
